@@ -1,27 +1,39 @@
 import React from 'react';
-import GoogleMapReact from 'google-map-react';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Paper, Typography, useMediaQuery } from '@material-ui/core';
 import LocationOnOutlinedIcon from '@material-ui/icons/LocationOnOutlined';
 import { Rating } from '@material-ui/lab';
 
 import useStyles from './styles';
 
-const Map = () => {
+function SetViewOnChange({ coords }) {
+	const map = useMap();
+	map.setView(coords, map.getZoom());
+
+	return null;
+}
+
+const Map = ({ coordinates }) => {
 	const classes = useStyles();
 	const isMobile = useMediaQuery('(min-width: 600px)');
 
-	const coordinates = { lat: 0, lng: 0 };
-
 	return (
-		<div className={classes.mapContainer}>
-			<GoogleMapReact
-				bootstrapURLKeys={{ key: process.env.REACT_APP_GOOGLE_MAPS_KEY }}
-				defaultCenter={coordinates}
-				center={coordinates}
-				defaultZoom={14}
-				margin={[50, 50, 50, 50]}
-				></GoogleMapReact>
-		</div>
+		<MapContainer
+			className={classes.mapContainer}
+			center={coordinates}
+			zoom={13}
+			scrollWheelZoom={false}>
+			<TileLayer
+				attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+				url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+			/>
+			<Marker position={coordinates}>
+				<Popup>
+					A pretty CSS3 popup. <br /> Easily customizable.
+				</Popup>
+			</Marker>
+			<SetViewOnChange coords={coordinates} />
+		</MapContainer>
 	);
 };
 
